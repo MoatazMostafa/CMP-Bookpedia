@@ -11,11 +11,17 @@ import com.plcoding.bookpedia.core.domain.map
 class BookRepositoryImpl(
     private val remoteBookDataSource: RemoteBookDataSource,
 ): BookRepository {
-    override suspend fun searchBooks(query: String) : Result<List<Book>, DataError> {
+    override suspend fun searchBooks(query: String) : Result<List<Book>, DataError.Remote> {
         return remoteBookDataSource.searchBooks(query).map {
             it.results.map { bookDto ->
                 bookDto.toBook()
             }
+        }
+    }
+
+    override suspend fun getBookDescription(bookId: String): Result<String?, DataError> {
+        return  remoteBookDataSource.getBookDetails(bookId).map {
+             it.description
         }
     }
 }
